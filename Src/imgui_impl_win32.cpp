@@ -267,15 +267,15 @@ void    ImGui_ImplWin32_NewFrame()
 // PS: We treat DBLCLK messages as regular mouse down messages, so this code will work on windows classes that have the CS_DBLCLKS flag set. Our own example app code doesn't set this flag.
 #if 0
 // Copy this line into your .cpp file to forward declare the function.
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+extern IMGUI_IMPL_API LRESULT MsgProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 #endif
-IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+IMGUI_IMPL_API LRESULT MsgProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam)
 {
     if (ImGui::GetCurrentContext() == NULL)
         return 0;
 
     ImGuiIO& io = ImGui::GetIO();
-    switch (msg)
+    switch (message)
     {
     case WM_LBUTTONDOWN: case WM_LBUTTONDBLCLK:
     case WM_RBUTTONDOWN: case WM_RBUTTONDBLCLK:
@@ -283,12 +283,12 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARA
     case WM_XBUTTONDOWN: case WM_XBUTTONDBLCLK:
     {
         int button = 0;
-        if (msg == WM_LBUTTONDOWN || msg == WM_LBUTTONDBLCLK) { button = 0; }
-        if (msg == WM_RBUTTONDOWN || msg == WM_RBUTTONDBLCLK) { button = 1; }
-        if (msg == WM_MBUTTONDOWN || msg == WM_MBUTTONDBLCLK) { button = 2; }
-        if (msg == WM_XBUTTONDOWN || msg == WM_XBUTTONDBLCLK) { button = (GET_XBUTTON_WPARAM(wParam) == XBUTTON1) ? 3 : 4; }
+        if (message == WM_LBUTTONDOWN || message == WM_LBUTTONDBLCLK) { button = 0; }
+        if (message == WM_RBUTTONDOWN || message == WM_RBUTTONDBLCLK) { button = 1; }
+        if (message == WM_MBUTTONDOWN || message == WM_MBUTTONDBLCLK) { button = 2; }
+        if (message == WM_XBUTTONDOWN || message == WM_XBUTTONDBLCLK) { button = (GET_XBUTTON_WPARAM(wParam) == XBUTTON1) ? 3 : 4; }
         if (!ImGui::IsAnyMouseDown() && ::GetCapture() == NULL)
-            ::SetCapture(hwnd);
+            ::SetCapture(handle);
         io.MouseDown[button] = true;
         return 0;
     }
@@ -298,12 +298,12 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARA
     case WM_XBUTTONUP:
     {
         int button = 0;
-        if (msg == WM_LBUTTONUP) { button = 0; }
-        if (msg == WM_RBUTTONUP) { button = 1; }
-        if (msg == WM_MBUTTONUP) { button = 2; }
-        if (msg == WM_XBUTTONUP) { button = (GET_XBUTTON_WPARAM(wParam) == XBUTTON1) ? 3 : 4; }
+        if (message == WM_LBUTTONUP) { button = 0; }
+        if (message == WM_RBUTTONUP) { button = 1; }
+        if (message == WM_MBUTTONUP) { button = 2; }
+        if (message == WM_XBUTTONUP) { button = (GET_XBUTTON_WPARAM(wParam) == XBUTTON1) ? 3 : 4; }
         io.MouseDown[button] = false;
-        if (!ImGui::IsAnyMouseDown() && ::GetCapture() == hwnd)
+        if (!ImGui::IsAnyMouseDown() && ::GetCapture() == handle)
             ::ReleaseCapture();
         return 0;
     }
